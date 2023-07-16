@@ -2,27 +2,24 @@ import "devextreme/dist/css/dx.dark.css";
 import "./App.css";
 import Button from "devextreme-react/button";
 import TextBox from "devextreme-react/text-box";
-import { useCallback, useState, useRef } from "react";
-
-let textValue = "";
+import Popup from "devextreme-react/popup";
+import { useCallback, useState } from "react";
 
 function App() {
-  const [content, setContent] = useState(false);
   const [value, setValue] = useState("");
-  const inputRef = useRef(null);
+  const [visible, setVisible] = useState(false);
 
   const handleValueChanged = useCallback((v) => {
     setValue(v.value);
   }, []);
 
-  const onClick = () => {
-    textValue = value;
-    setContent(!content);
+  const togglePopup = () => {
+    setVisible(!visible);
   };
 
   return (
     <div className="App">
-      <Button text="Click me!" type="success" onClick={onClick} />
+      <Button text="Click me!" type="success" onClick={togglePopup} />
       <TextBox
         className="textbox"
         value={value}
@@ -30,26 +27,30 @@ function App() {
         label="Link"
         labelMode="floating"
       />
-      <TextBox
-        className="textbox"
-        ref={inputRef}
-        defaultValue=""
-        label="Link"
-        labelMode="floating"
+      <Popup
+        contentRender={() => renderContent(value)}
+        visible={visible}
+        hideOnOutsideClick={true}
+        showTitle={true}
+        title="Information"
+        onHiding={togglePopup}
+        width={500}
+        height={500}
       />
-      {content && <TextBoxesContent inputRef={inputRef} value={textValue} />}
     </div>
   );
 }
 
-function TextBoxesContent(props) {
-  const { value, inputRef } = props;
+const renderContent = (value) => {
   return (
-    <div className="text-boxes-value">
-      <p>{value}</p>
-      <p>{inputRef.current.instance.option("value")}</p>
-    </div>
+    <>
+      <img
+        src="https://visualstudio.microsoft.com/wp-content/uploads/2019/03/Devexpress-2.png"
+        alt="logo"
+      />
+      <p>Text Button value: {value}</p>
+    </>
   );
-}
+};
 
 export default App;
